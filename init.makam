@@ -3,7 +3,7 @@
 %use "syntax".
 %use "maps".
 %use "constructive".
-%use "normalize".
+%use "step".
 %use "integers".
 
 exec : [A] instr A -> A -> prop.
@@ -39,10 +39,5 @@ normalize : string -> string -> prop.
 normalize XStr YStr :-
     isocast XStr (Program : program term),
     run Program X,
-    apply X (bang terminal) Y,
+    multistep X Y,
     isocast (pure Y) (YStr : string).
-
-normalize <<
-Let "foo" := λ "a" : 1 → * . λ "x" : 1 → "a" . "x".
-"foo" pass Z
->> Result ?

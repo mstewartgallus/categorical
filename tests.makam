@@ -40,6 +40,9 @@ categorical : testsuite.
 >> Yes:
 >> Result := "λ \"x1\" : 1 → * . \"x1\" ∘ ! term ".
 
+>> normalize << id Z ∘ 1 >> Result ?
+>> Yes:
+>> Result := "1 ".
 
 (* FIXME demonstrate more forall/exists stuff *)
 (* FIXME experiment with coforall/coexists *)

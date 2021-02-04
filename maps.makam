@@ -1,6 +1,6 @@
 maps : term -> term -> term -> prop.
 
-maps object kind.
+maps object terminal kind.
 
 (* Allow User Defined Axioms *)
 maps (axiom _ A B) A B.

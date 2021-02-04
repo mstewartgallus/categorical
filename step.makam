@@ -1,0 +1,30 @@
+multistep : term -> term -> prop.
+
+step : term -> term -> prop.
+step_ : term -> term -> prop.
+
+multistep X Z :-
+    if step X Y
+    then multistep Y Z
+    else unify X Z.
+
+step X Y :-
+    if step_ X Y then success else structural @step_ X Y.
+
+(* FIXME how to handle chains of composition ? *)
+(* FIXME step both ways *)
+step_ (compose (compose F G) H) (compose F (compose G H)).
+
+step_ (compose (id _) X) X.
+step_ (compose X (id _)) X.
+
+(* FIXME type inference ? *)
+step_ (compose (bang _) _) (bang _).
+step_ (compose _ (absurd _)) (absurd _).
+
+(* FIXME do better lift/pass rules *)
+step_ (compose (kappa A F) (lift (id A) X)) (F X).
+step_ (compose (lift (id A) X) (zeta A F)) (F X).
+
+step_ (compose (zeta A F) X) (zeta A (fun y => compose (F y) X)).
+step_ (compose X (kappa A F)) (kappa A (fun y => compose X (F y))).

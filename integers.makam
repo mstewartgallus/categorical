@@ -2,6 +2,3 @@
 maps zobject terminal object.
 maps (z _) terminal zobject.
 maps add (exists zobject (fun x => exists zobject (fun y => terminal))) zobject.
-
-apply zobject _ zobject.
-apply (z N) _ (z N).

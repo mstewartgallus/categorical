@@ -11,18 +11,27 @@ being type
 
 We have
 
-   (λ "a" : 1 → * . λ "x" : 1 → "a" . "x") Z 3
+    (λ "a" : 1 → * . λ "x" : 1 → "a" . "x") Z 3
 
 being type
 
-   term → Z
+    term → Z
 
 Also we flip arrows around so you can do
 
-   λ "a" : Z → 0.
+    λ "a" : Z → 0.
 
 whatever that means.
 
+Function "f x" application is explicitly
+
+   f pass x
+
+You can do
+
+   f lift x
+
+for a first-order version.
 
 based the language off Calculus of Constructions/the Kappa Zeta
 Decomposition [1] plus the opposite rules simply obtained by flipping
