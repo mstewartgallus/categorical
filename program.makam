@@ -1,0 +1,11 @@
+(* We embed our core calculus inside a little operational monad for
+defining axioms/other side effects. *)
+
+program : type -> type.
+instr : type -> type.
+
+bind : instr A -> (A -> program B) -> program B.
+pure : A -> program A.
+
+nop : A -> instr A.
+check : term -> term -> term -> instr term.

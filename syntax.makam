@@ -1,0 +1,116 @@
+%open syntax.
+
+(*
+To check the syntax of our language we have to add in a few extra
+non HOAS terms with explicitly labelled variables. The concrete
+library does most of the work for us.
+*)
+
+program : syntax (program term).
+concrete_program : syntax (concrete (program term)).
+
+chain : syntax term.
+compound : syntax term.
+expr : syntax term.
+
+variable : syntax (concrete.name term).
+termvar : concrete.namespace term.
+binder : syntax term.
+
+concrete.pick_namespace_userdef (_: term) termvar.
+
+ccheck : concrete.name term -> term -> term -> term -> program B -> program B.
+clet : concrete.name A -> A -> program B -> program B.
+
+concrete.resolve_conversion
+         (ccheck Name A B X Body)
+         (bind (check X A B) (concrete.lambda Name Body)).
+concrete.resolve_conversion
+         (clet Name X Body)
+         (bind (nop X) (concrete.lambda Name Body)).
+
+cexists : concrete.name term -> term -> term -> term.
+ckappa : concrete.name term -> term -> term -> term.
+
+cforall : concrete.name term -> term -> term -> term.
+czeta : concrete.name term -> term -> term -> term.
+
+concrete.resolve_conversion (cforall Name Obj Body) (forall Obj (concrete.lambda Name Body)).
+concrete.resolve_conversion (czeta Name Obj Body) (zeta Obj (concrete.lambda Name Body)).
+
+concrete.resolve_conversion (cexists Name Obj Body) (exists Obj (concrete.lambda Name Body)).
+concrete.resolve_conversion (ckappa Name Obj Body) (kappa Obj (concrete.lambda Name Body)).
+
+ccoforall : concrete.name term -> term -> term -> term.
+ccozeta : concrete.name term -> term -> term -> term.
+
+ccoexists : concrete.name term -> term -> term -> term.
+ccokappa : concrete.name term -> term -> term -> term.
+
+concrete.resolve_conversion (ccoforall Name Obj Body) (coforall Obj (concrete.lambda Name Body)).
+concrete.resolve_conversion (ccozeta Name Obj Body) (cozeta Obj (concrete.lambda Name Body)).
+
+concrete.resolve_conversion (ccoexists Name Obj Body) (coexists Obj (concrete.lambda Name Body)).
+concrete.resolve_conversion (ccokappa Name Obj Body) (cokappa Obj (concrete.lambda Name Body)).
+
+(* FIXME Use something else for variables. *)
+(* FIXME Find a way to reduce generated parser size. *)
+`(syntax_rules <<
+  concrete_program -> concrete { <program> }
+  program ->
+     clet { "Let" <variable> ":=" <binder> "." <program> }
+     / ccheck { "Check" <variable> ":" <expr> "→" <expr> ":=" <binder> "." <program> }
+     / pure { <binder> }
+
+  variable ->
+      concrete.name termvar { <makam.string_literal> } ;
+
+  compound ->
+      bang { "!" <expr> }
+      / absurd { "absurd" <expr> }
+      / id { "id" <expr> }
+      / pass { <expr> "pass" <expr> }
+      / lift { <expr> "lift" <expr> }
+      / copass { <expr> "copass" <expr> }
+      / colift { <expr> "colift" <expr> }
+      / axiom { "axiom" <makam.string_literal> ":" <expr> "→" <expr> }
+      / expr ;
+
+  expr ->
+      kind { "□" }
+      / object { "*" }
+      / terminal { "term" }
+      / initial { "init" }
+      / add { "add" }
+      / zobject { "Z" }
+      / z { <makam.int_literal> }
+      / concrete.var { <variable> }
+      / { "(" <binder> ")" } ;
+
+  chain ->
+      compose { <compound> "∘" <chain> }
+      / compound ;
+
+  binder ->
+      cforall { "∃" <variable> ":" "1" "→" <expr> "." <binder> }
+      / czeta { "λ" <variable> ":" "1" "→" <expr> "." <binder> }
+
+      / cexists { "∃" <variable> ":" "1" "→" <expr> "." <binder> }
+      / ckappa { "κ" <variable> ":" "1" "→" <expr> "." <binder> }
+
+      / ccoforall { "∀" <variable> ":" <expr> "→" "0" "." <binder> }
+      / ccozeta { "λ" <variable> ":" <expr> "→" "0" "." <binder> }
+
+      / ccoexists { "∃" <variable> ":" <expr> "→" "0" "." <binder> }
+      / ccokappa { "κ" <variable> ":" <expr> "→" "0" "." <binder> }
+
+      / chain
+
+>>).
+
+(* FIXME. We currently generate a 20,000 line grammar. *)
+`( syntax.def_toplevel_js concrete_program ).
+
+isocast_def (Iso: iso (program term) string) :-
+  eq Iso (iso.compose [ iso.inverse (iso.bidi concrete.resolve), PrettyIso ]),
+  isocast_find unit (PrettyIso: iso (concrete (program term)) string).

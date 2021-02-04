@@ -1,0 +1,42 @@
+(* Think of this as composition, hom a b -> (hom 1 a -> hom 1 b *)
+(* FIXME account for nonnormalizable terms like axioms *)
+
+apply : term -> term -> term -> prop.
+
+(* FIXME intermix with typechecking *)
+apply object _ object.
+
+apply (id _) X X.
+
+(* FIXME only do one or the other, not defaulty *)
+apply (compose (kappa A F) (lift (id A) X)) Y Z :-
+    apply (F X) Y Z.
+apply (compose (pass (id A) X) (zeta A F)) Y Z :-
+    apply (F X) Y Z.
+
+apply (compose F G) X Z :-
+    apply G X Y,
+    apply F Y Z.
+
+apply (axiom Name A B) X (compose (axiom Name A B) X).
+
+apply terminal _ terminal.
+apply (bang _) _ (bang _).
+
+apply initial _ initial.
+
+(* FIXME absurd needs some kind of CPS or something *)
+(* apply (absurd _) Label Y :- jump Label Y. *)
+
+apply (forall A F) _ (forall A F).
+
+(* FIXME normalize underneath the lambda *)
+apply (zeta A F) X (zeta A (fun y => compose (F y) X)).
+apply (pass F X) Y Z :-
+    apply (compose (pass (id A) X) F) Y Z.
+
+apply (exists A F) _ (exists A F).
+
+apply (kappa A F) X (kappa A (fun y => compose (F y) X)).
+apply (lift F X) Y Z :-
+    apply (compose F (lift (id A) X)) Y Z.

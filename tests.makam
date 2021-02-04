@@ -1,0 +1,45 @@
+%use "init".
+
+categorical : testsuite.
+%testsuite categorical.
+
+(* Check Basic Numbers Work *)
+>> typecheck << 1 >> Domain Range ?
+>> Yes:
+>> Range := "Z ",
+>> Domain := "term ".
+
+(* Check Basic Addition Works *)
+>> typecheck << (add lift 4) lift 8 >> Domain Range ?
+>> Yes:
+>> Range := "Z ",
+>> Domain := "term ".
+
+(* Check Identity Works *)
+>> typecheck << λ "a" : 1 → * . λ "x" : 1 → "a" . "x" >> Domain Range ?
+>> Yes:
+>> Y := "∃ \"x1\" : 1 → * . ∃ \"x2\" : 1 → \"x1\" . \"x1\" ",
+>> X := "term ".
+
+(* Check Axioms Work *)
+>> typecheck {
+>> Let "myaxiom" := axiom "myaxiom" : Z → Z .
+>> "myaxiom"
+>> } Domain Range ?
+>> Yes:
+>> Range := "Z ",
+>> Domain := "Z ".
+
+
+
+>> normalize << 1 >> Result ?
+>> Yes:
+>> Result := "1 ".
+
+>> normalize << λ "a" : 1 → * . "a" >> Result ?
+>> Yes:
+>> Result := "λ \"x1\" : 1 → * . \"x1\" ∘ ! term ".
+
+
+(* FIXME demonstrate more forall/exists stuff *)
+(* FIXME experiment with coforall/coexists *)

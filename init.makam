@@ -1,0 +1,48 @@
+%use "ast".
+%use "program".
+%use "syntax".
+%use "maps".
+%use "constructive".
+%use "normalize".
+%use "integers".
+
+exec : [A] instr A -> A -> prop.
+
+run : program A -> A -> prop.
+run (pure X) X.
+run (bind Instr F) Y :-
+    exec Instr X,
+    run (F X) Y.
+exec (nop X) X.
+exec (check X A B) X :-
+    maps X A B.
+
+map_program : program term -> term -> term -> prop.
+map_program Program A B :-
+    run Program Result,
+    maps Result A B.
+
+typecheck : string -> string -> string -> prop.
+typecheck Input AStr BStr :-
+    isocast Input (Program : program term),
+
+    (* Basically put Type in Type.  A small inconsistency for rapid
+    prototyping instead of implementing universes. *)
+
+    (maps kind terminal kind ->
+         map_program Program A B),
+
+    isocast (pure A) (AStr : string),
+    isocast (pure B) (BStr : string).
+
+normalize : string -> string -> prop.
+normalize XStr YStr :-
+    isocast XStr (Program : program term),
+    run Program X,
+    apply X (bang terminal) Y,
+    isocast (pure Y) (YStr : string).
+
+normalize <<
+Let "foo" := λ "a" : 1 → * . λ "x" : 1 → "a" . "x".
+"foo" pass Z
+>> Result ?
