@@ -41,3 +41,5 @@ normalize XStr YStr :-
     run Program X,
     multistep X Y,
     isocast (pure Y) (YStr : string).
+
+normalize << (id Z ∘ axiom "foo" : 1 → Z) ∘ (id Z ∘ id Z) >> Result ?
