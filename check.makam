@@ -1,0 +1,87 @@
+check : term -> term -> term -> prop.
+
+check object _ kind.
+
+(* Allow User Defined Axioms *)
+check (axiom _ A B) A B.
+
+(* Basic Rules of Categories *)
+check id A A.
+check (compose F G) A C :-
+    check F B C,
+    check G A B.
+
+(* Functions/Dependent Products *)
+check (forall A Body) _ object :-
+    (any:term -> var:term -> check var any A -> check (Body var) _ object).
+check (zeta A Body) B (forall A C) :-
+    (any:term -> var:term -> check var any A -> check (Body var) B (C var)).
+check (pass X) (forall A B) (B X) :-
+    (any:term -> check X any A).
+
+(* Tuples/Dependent Sum *)
+check (exists A Body) _ object :-
+    (any:term -> var:term -> check var any A -> check (Body var) _ object).
+check (kappa A Body) (exists A B) C :-
+    (any:term -> var:term -> check var any A -> check (Body var) (B var) C).
+check (lift X) (B X) (exists A B) :-
+    (any:term -> check X any A).
+
+(* Coexponentials? *)
+check (coforall A Body) _ object :-
+    (any:term -> var:term -> check var A any -> check (Body var) _ object).
+check (cozeta A Body) (coforall A C) B :-
+    (any:term -> var:term -> check var A any -> check (Body var) (C var) B).
+check (copass X) (B X) (coforall A B) :-
+    (any:term -> check X A any).
+
+(* Cotuples? *)
+check (coexists A Body) _ object :-
+    (any:term -> var:term -> check var A any -> check (Body var) _ object).
+check (cokappa A Body) C (coexists A B) :-
+    (any:term -> var:term -> check var any A -> check (Body var) C (B var)).
+check (colift X) (coexists A B) (B X) :-
+    (any:term -> check X A any).
+
+(* FIXME Add Normalization to Typechecking *)
+
+(* Normalization *)
+
+multistep : term -> term -> prop.
+
+step : term -> term -> prop.
+step_ : term -> term -> prop.
+
+apply : term -> term -> term -> prop.
+
+multistep X Z :-
+    if step X Y
+    then multistep Y Z
+    else unify X Z.
+
+step X Y :-
+    if step_ X Y
+    then success
+    else structural @step_ X Y.
+
+step_ (compose F G) Y :-
+    apply F G Y.
+
+apply id X X.
+apply X id X.
+
+apply (kappa A F) (lift X) (F X) :-
+    (any:term -> check X any A).
+apply (lift X) (zeta A F) (F X) :-
+    (any:term -> check X any A).
+
+apply (cozeta A F) (copass X) (F X) :-
+    (any:term -> check X A any).
+apply (colift X) (cokappa A F) (F X) :-
+    (any:term -> check X A any).
+
+apply (zeta A F) X (zeta A (fun y => compose (F y) X)).
+apply X (kappa A F) (kappa A (fun y => compose X (F y))).
+
+apply X (cozeta A F) (cozeta A (fun y => compose X (F y))).
+apply (cokappa A F) X (cokappa A (fun y => compose (F y) X)).

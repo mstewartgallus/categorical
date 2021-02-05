@@ -1,4 +1,9 @@
 (* Extend the language with some basic integer extras. *)
-maps zobject terminal object.
-maps (z _) terminal zobject.
-maps add (exists zobject (fun x => exists zobject (fun y => terminal))) zobject.
+check zobject _ object.
+check (z _) _ zobject.
+check add (exists zobject (fun x => exists zobject (fun y => _))) zobject.
+
+apply (compose add (lift (z A))) (lift (z B)) (z C) :-
+    plus A B C.
+apply add (compose (lift (z A)) (lift (z B))) (z C) :-
+    plus A B C.

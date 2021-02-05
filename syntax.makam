@@ -66,21 +66,17 @@ concrete.resolve_conversion (ccokappa Name Obj Body) (cokappa Obj (concrete.lamb
       concrete.name termvar { <makam.string_literal> } ;
 
   compound ->
-      bang { "!" <expr> }
-      / absurd { "absurd" <expr> }
-      / id { "id" <expr> }
-      / pass { <expr> "pass" <expr> }
-      / lift { <expr> "lift" <expr> }
-      / copass { <expr> "copass" <expr> }
-      / colift { <expr> "colift" <expr> }
+      id { "id" }
+      / pass { "pass" <expr> }
+      / lift { "lift" <expr> }
+      / copass { "copass" <expr> }
+      / colift { "colift" <expr> }
       / axiom { "axiom" <makam.string_literal> ":" <expr> "→" <expr> }
       / expr ;
 
   expr ->
       kind { "□" }
       / object { "*" }
-      / terminal { "term" }
-      / initial { "init" }
       / add { "add" }
       / zobject { "Z" }
       / z { <makam.int_literal> }
@@ -92,7 +88,7 @@ concrete.resolve_conversion (ccokappa Name Obj Body) (cokappa Obj (concrete.lamb
       / compound ;
 
   binder ->
-      cforall { "∃" <variable> ":" "1" "→" <expr> "." <binder> }
+      cforall { "∀" <variable> ":" "1" "→" <expr> "." <binder> }
       / czeta { "λ" <variable> ":" "1" "→" <expr> "." <binder> }
 
       / cexists { "∃" <variable> ":" "1" "→" <expr> "." <binder> }

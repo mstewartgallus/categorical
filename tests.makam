@@ -30,8 +30,6 @@ categorical : testsuite.
 >> Range := "Z ",
 >> Domain := "Z ".
 
-
-
 >> normalize << 1 >> Result ?
 >> Yes:
 >> Result := "1 ".

@@ -1,9 +1,8 @@
 %use "ast".
+
 %use "program".
 %use "syntax".
-%use "maps".
-%use "constructive".
-%use "step".
+%use "check".
 %use "integers".
 
 exec : [A] instr A -> A -> prop.
@@ -15,31 +14,36 @@ run (bind Instr F) Y :-
     run (F X) Y.
 exec (nop X) X.
 exec (check X A B) X :-
-    maps X A B.
+    check X A B.
 
-map_program : program term -> term -> term -> prop.
-map_program Program A B :-
-    run Program Result,
-    maps Result A B.
+eval_ : program term -> term -> term -> term -> prop.
+eval_ Program A B Result :-
+    run Program X,
+    check X A B,
+    multistep X Result.
 
-typecheck : string -> string -> string -> prop.
-typecheck Input AStr BStr :-
+eval : string -> string -> string -> string -> prop.
+eval Input AStr BStr ResultStr :-
     isocast Input (Program : program term),
 
-    (* Basically put Type in Type.  A small inconsistency for rapid
-    prototyping instead of implementing universes. *)
+    (* for quick prototyping instead of implementing universes. *)
 
-    (maps kind terminal kind ->
-         map_program Program A B),
+    (check kind _ kind ->
+         eval_ Program A B Result),
 
-    isocast (pure A) (AStr : string),
-    isocast (pure B) (BStr : string).
+    (* FIXME bind all free variables even within a term *)
 
-normalize : string -> string -> prop.
-normalize XStr YStr :-
-    isocast XStr (Program : program term),
-    run Program X,
-    multistep X Y,
-    isocast (pure Y) (YStr : string).
+    if refl.isunif A
+            then unify AStr "_"
+            else isocast (pure A) (AStr : string),
 
-normalize << (id Z ∘ axiom "foo" : 1 → Z) ∘ (id Z ∘ id Z) >> Result ?
+    if refl.isunif B
+            then unify BStr "_"
+            else isocast (pure B) (BStr : string),
+
+    if refl.isunif Result
+            then unify ResultStr "_"
+            else isocast (pure Result) (ResultStr : string).
+
+eval << add ∘ (lift 1 ∘ lift 4) >> A B Result ?
+eval << (add ∘ lift 1) ∘ lift 4 >> A B Result ?
