@@ -12,16 +12,16 @@ check (axiom _ A B) A B.
 check set _ object.
 
 (* Basic Rules of Categories *)
-check id A A.
+check (id A) A A.
 check (compose F G) A C :-
     check F B C,
     check G A B.
 
 check terminal _ set.
-check bang _ terminal.
+check (bang A) A terminal.
 
 check initial _ set.
-check absurd initial _.
+check (absurd A) initial A.
 
 (* Functions/Dependent Products *)
 check (forall A Body) _ L :-
@@ -31,8 +31,9 @@ check (forall A Body) _ L :-
 check (zeta A Body) B (forall A C) :-
     check A terminal _,
     (x:term -> check x terminal A -> check (Body x) B (C x)).
-check (pass X) (forall A B) (B X) :-
-    check X terminal A.
+check (pass F X) C (B X) :-
+    check X terminal A,
+    check F C (forall A B).
 
 (* Tuples/Dependent Sum *)
 check (exists A Body) _ L :-
@@ -41,8 +42,9 @@ check (exists A Body) _ L :-
 check (kappa A Body) (exists A B) C :-
     check A terminal _,
     (x:term -> check x terminal A -> check (Body x) (B x) C).
-check (lift X) (B X) (exists A B) :-
-    (check X terminal A).
+check (lift F X) (B X) C :-
+    check X terminal A,
+    check F (exists A B) C.
 
 (* Coexponentials? *)
 check (coforall A Body) _ L :-
@@ -51,8 +53,9 @@ check (coforall A Body) _ L :-
 check (cozeta A Body) (coforall A C) B :-
     check A terminal _,
     (x:term -> check x A initial -> check (Body x) (C x) B).
-check (copass X) (B X) (coforall A B) :-
-    (check X A initial).
+check (copass F X) (B X) C :-
+    check X A initial,
+    check F (coforall A B) C.
 
 (* Cotuples? *)
 check (coexists A Body) _ L :-
@@ -61,8 +64,9 @@ check (coexists A Body) _ L :-
 check (cokappa A Body) C (coexists A B) :-
     check A terminal _,
     (x:term -> check x initial A -> check (Body x) C (B x)).
-check (colift X) (coexists A B) (B X) :-
-    check X A initial.
+check (colift F X) C (B X) :-
+    check X A initial,
+    check F C (coexists A B).
 
 (* FIXME Add Normalization to Typechecking *)
 
@@ -88,21 +92,30 @@ step X Y :-
 step_ (compose F G) Y :-
     apply F G Y.
 
-apply id X X.
-apply X id X.
+step (lift (kappa A F) X) (F X) :-
+    check X terminal A.
+step (pass (zeta A F) X) (F X) :-
+    check X terminal A.
+step (colift (cokappa A F) X) (F X) :-
+    check X A initial.
+step (copass (cozeta A F) X) (F X) :-
+    check X A initial.
 
-apply bang _ bang.
-apply _ absurd absurd.
+apply (id A) X X :-
+    check X _ A.
+apply X (id A) X :-
+    check X A _.
 
-apply (kappa A F) (lift X) (F X) :-
-    (any:term -> check X any A).
-apply (lift X) (zeta A F) (F X) :-
-    (any:term -> check X any A).
+apply (bang B) X (bang A) :-
+    check X A B.
+apply X (absurd A) (absurd B) :-
+    check X A B.
 
-apply (cozeta A F) (copass X) (F X) :-
-    (any:term -> check X A any).
-apply (colift X) (cokappa A F) (F X) :-
-    (any:term -> check X A any).
+apply Y (lift F X) (lift (compose Y F) X).
+apply (pass F X) Y (pass (compose F Y) X).
+
+apply (colift F X) Y (colift (compose Y F) X).
+apply Y (copass F X) (copass (compose F Y) X).
 
 apply (zeta A F) X (zeta A (fun y => compose (F y) X)).
 apply X (kappa A F) (kappa A (fun y => compose X (F y))).

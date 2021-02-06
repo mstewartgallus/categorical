@@ -66,20 +66,21 @@ concrete.resolve_conversion (ccokappa Name Obj Body) (cokappa Obj (concrete.lamb
       concrete.name termvar { <makam.string_literal> } ;
 
   compound ->
-      pass { "pass" <expr> }
-      / lift { "lift" <expr> }
-      / copass { "copass" <expr> }
-      / colift { "colift" <expr> }
+      id { "id" <expr> }
+      / pass { <expr> "pass" <compound> }
+      / lift { <expr> "lift" <compound> }
+      / copass { <expr> "copass" <compound> }
+      / colift { <expr> "colift" <compound> }
       / axiom { "axiom" <makam.string_literal> ":" <expr> "→" <expr> }
       / expr ;
 
   expr ->
-      object { "□" }
-      / set { "*" }
-      / bang { "!" }
-      / absurd { "absurd" }
-      / terminal { "term" }
-      / initial { "init" }
+      object { "Object" }
+      / set { "Set" }
+      / bang { "!" <expr> }
+      / absurd { "absurd" <expr> }
+      / terminal { "*" }
+      / initial { "∅" }
       / add { "add" }
       / zset { "Z" }
       / z { <makam.int_literal> }
@@ -91,17 +92,17 @@ concrete.resolve_conversion (ccokappa Name Obj Body) (cokappa Obj (concrete.lamb
       / compound ;
 
   binder ->
-      cforall { "∀" <variable> ":" "1" "→" <expr> "." <binder> }
-      / czeta { "λ" <variable> ":" "1" "→" <expr> "." <binder> }
+      cforall { "∀" <variable> ":" "*" "→" <expr> "," <binder> }
+      / czeta { "λ" <variable> ":" "*" "→" <expr> "⇒" <binder> }
 
-      / cexists { "∃" <variable> ":" "1" "→" <expr> "." <binder> }
-      / ckappa { "κ" <variable> ":" "1" "→" <expr> "." <binder> }
+      / cexists { "∃" <variable> ":" "*" "→" <expr> "," <binder> }
+      / ckappa { "κ" <variable> ":" "*" "→" <expr> "⇒" <binder> }
 
-      / ccoforall { "∀" <variable> ":" <expr> "→" "0" "." <binder> }
-      / ccozeta { "λ" <variable> ":" <expr> "→" "0" "." <binder> }
+      / ccoforall { "∀" <variable> ":" <expr> "→" "∅" "," <binder> }
+      / ccozeta { "λ" <variable> ":" <expr> "→" "∅" "⇒" <binder> }
 
-      / ccoexists { "∃" <variable> ":" <expr> "→" "0" "." <binder> }
-      / ccokappa { "κ" <variable> ":" <expr> "→" "0" "." <binder> }
+      / ccoexists { "∃" <variable> ":" <expr> "→" "∅" "," <binder> }
+      / ccokappa { "κ" <variable> ":" <expr> "→" "∅" "⇒" <binder> }
 
       / chain
 

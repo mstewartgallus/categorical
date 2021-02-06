@@ -5,30 +5,30 @@ axiom : string -> term -> term -> term.
 object : term.
 set : term.
 
-id : term.
+id : term -> term.
 compose : term -> term -> term.
 
 terminal : term.
-bang : term.
+bang : term -> term.
 
 initial : term.
-absurd : term.
+absurd : term -> term.
 
 forall : term -> (term -> term) -> term.
 zeta : term -> (term -> term) -> term.
-pass : term -> term.
+pass : term -> term -> term.
 
 exists : term -> (term -> term) -> term.
 kappa : term -> (term -> term) -> term.
-lift : term -> term.
+lift : term -> term -> term.
 
 coforall : term -> (term -> term) -> term.
 cozeta : term -> (term -> term) -> term.
-copass : term -> term.
+copass : term -> term -> term.
 
 coexists : term -> (term -> term) -> term.
 cokappa : term -> (term -> term) -> term.
-colift : term -> term.
+colift : term -> term -> term.
 
 (* Some basic integer extras *)
 zset : term.
