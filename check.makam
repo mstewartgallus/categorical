@@ -1,9 +1,15 @@
 check : term -> term -> term -> prop.
 
-check object _ kind.
+dom : term -> term -> prop.
+dom X A :- check X A _.
+
+cod : term -> term -> prop.
+cod X B :- check X _ B.
 
 (* Allow User Defined Axioms *)
 check (axiom _ A B) A B.
+
+check set _ object.
 
 (* Basic Rules of Categories *)
 check id A A.
@@ -11,37 +17,52 @@ check (compose F G) A C :-
     check F B C,
     check G A B.
 
+check terminal _ set.
+check bang _ terminal.
+
+check initial _ set.
+check absurd initial _.
+
 (* Functions/Dependent Products *)
-check (forall A Body) _ object :-
-    (any:term -> var:term -> check var any A -> check (Body var) _ object).
+check (forall A Body) _ L :-
+    check A terminal _,
+    (x:term -> check x terminal A -> check (Body x) terminal L).
+
 check (zeta A Body) B (forall A C) :-
-    (any:term -> var:term -> check var any A -> check (Body var) B (C var)).
+    check A terminal _,
+    (x:term -> check x terminal A -> check (Body x) B (C x)).
 check (pass X) (forall A B) (B X) :-
-    (any:term -> check X any A).
+    check X terminal A.
 
 (* Tuples/Dependent Sum *)
-check (exists A Body) _ object :-
-    (any:term -> var:term -> check var any A -> check (Body var) _ object).
+check (exists A Body) _ L :-
+    check A terminal _,
+    (x:term -> check x terminal A -> check (Body x) terminal L).
 check (kappa A Body) (exists A B) C :-
-    (any:term -> var:term -> check var any A -> check (Body var) (B var) C).
+    check A terminal _,
+    (x:term -> check x terminal A -> check (Body x) (B x) C).
 check (lift X) (B X) (exists A B) :-
-    (any:term -> check X any A).
+    (check X terminal A).
 
 (* Coexponentials? *)
-check (coforall A Body) _ object :-
-    (any:term -> var:term -> check var A any -> check (Body var) _ object).
+check (coforall A Body) _ L :-
+    check A terminal _,
+    (x:term -> check x A initial -> check (Body x) terminal L).
 check (cozeta A Body) (coforall A C) B :-
-    (any:term -> var:term -> check var A any -> check (Body var) (C var) B).
+    check A terminal _,
+    (x:term -> check x A initial -> check (Body x) (C x) B).
 check (copass X) (B X) (coforall A B) :-
-    (any:term -> check X A any).
+    (check X A initial).
 
 (* Cotuples? *)
-check (coexists A Body) _ object :-
-    (any:term -> var:term -> check var A any -> check (Body var) _ object).
+check (coexists A Body) _ L :-
+    check A terminal _,
+    (x:term -> check x A initial -> check (Body x) terminal L).
 check (cokappa A Body) C (coexists A B) :-
-    (any:term -> var:term -> check var any A -> check (Body var) C (B var)).
+    check A terminal _,
+    (x:term -> check x initial A -> check (Body x) C (B x)).
 check (colift X) (coexists A B) (B X) :-
-    (any:term -> check X A any).
+    check X A initial.
 
 (* FIXME Add Normalization to Typechecking *)
 
@@ -69,6 +90,9 @@ step_ (compose F G) Y :-
 
 apply id X X.
 apply X id X.
+
+apply bang _ bang.
+apply _ absurd absurd.
 
 apply (kappa A F) (lift X) (F X) :-
     (any:term -> check X any A).

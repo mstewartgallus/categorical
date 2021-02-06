@@ -28,7 +28,7 @@ eval Input AStr BStr ResultStr :-
 
     (* for quick prototyping instead of implementing universes. *)
 
-    (check kind _ kind ->
+    (check object _ object ->
          eval_ Program A B Result),
 
     (* FIXME bind all free variables even within a term *)
@@ -45,5 +45,8 @@ eval Input AStr BStr ResultStr :-
             then unify ResultStr "_"
             else isocast (pure Result) (ResultStr : string).
 
+eval << λ "a" : 1 → * . λ "x" : 1 → "a" . "x" >> Dom Cod Result ?
+
+eval << add ∘ (lift 1 ∘ lift 4) >> A B Result ?
 eval << add ∘ (lift 1 ∘ lift 4) >> A B Result ?
 eval << (add ∘ lift 1) ∘ lift 4 >> A B Result ?

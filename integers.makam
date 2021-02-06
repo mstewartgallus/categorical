@@ -1,7 +1,7 @@
 (* Extend the language with some basic integer extras. *)
-check zobject _ object.
-check (z _) _ zobject.
-check add (exists zobject (fun x => exists zobject (fun y => _))) zobject.
+check zset _ set.
+check (z _) _ zset.
+check add (exists zset (fun x => exists zset (fun y => _))) zset.
 
 apply (compose add (lift (z A))) (lift (z B)) (z C) :-
     plus A B C.

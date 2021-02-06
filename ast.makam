@@ -2,11 +2,17 @@ term : type.
 
 axiom : string -> term -> term -> term.
 
-kind : term.
 object : term.
+set : term.
 
 id : term.
 compose : term -> term -> term.
+
+terminal : term.
+bang : term.
+
+initial : term.
+absurd : term.
 
 forall : term -> (term -> term) -> term.
 zeta : term -> (term -> term) -> term.
@@ -25,6 +31,6 @@ cokappa : term -> (term -> term) -> term.
 colift : term -> term.
 
 (* Some basic integer extras *)
-zobject : term.
+zset : term.
 z : int -> term.
 add : term.
