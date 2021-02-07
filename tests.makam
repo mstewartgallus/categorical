@@ -18,14 +18,14 @@ categorical : testsuite.
 >> Domain := "* ".
 
 (* Check Identity Works *)
->> eval << λ "a" : * → Set ⇒ λ "x" : * → "a" ⇒ "x" >> Dom Cod Result ?
+>> eval << lam "a" : * -> Set => lam "x" : * -> "a" => "x" >> Dom Cod Result ?
 >> Yes:
->> Cod := "∃ \"x1\" : * → Set , ∃ \"x2\" : * → \"x1\" , \"x1\" ",
+>> Cod := "exists \"x1\" : * -> Set , exists \"x2\" : * -> \"x1\" , \"x1\" ",
 >> Dom := "* ".
 
 (* Check Axioms Work *)
 >> eval {
->> Let "myaxiom" := axiom "myaxiom" : Z → Z .
+>> Let "myaxiom" := axiom "myaxiom" : Z -> Z .
 >> "myaxiom"
 >> } Dom Cod Result ?
 >> Yes:
@@ -36,9 +36,9 @@ categorical : testsuite.
 >> Yes:
 >> Result := "1 ".
 
->> eval << λ "a" : * → Set ⇒ "a" >> Dom Cod Result ?
+>> eval << lam "a" : * -> Set => "a" >> Dom Cod Result ?
 >> Yes:
->> eval := "λ \"x1\" : * → Set ⇒ \"x1\" ∘ ! term ".
+>> Result := "lam \"x1\" : * -> Set => \"x1\" ∘ ! term ".
 
 >> eval << id Z ∘ 1 >> Dom Cod Result ?
 >> Yes:

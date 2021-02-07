@@ -1,0 +1,16 @@
+(* Extend the language with some basic integer extras. *)
+domain zset terminal.
+codomain zset set.
+
+domain (z _) terminal.
+codomain (z _) zset.
+
+domain add (exists zset (fun x => exists zset (fun y => terminal))).
+codomain add zset.
+
+wellformed zset.
+wellformed (z _).
+wellformed add.
+
+step (lift (lift add (z A)) (z B)) (z C) :-
+    plus A B C.

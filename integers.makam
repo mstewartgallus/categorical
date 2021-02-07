@@ -1,7 +1,0 @@
-(* Extend the language with some basic integer extras. *)
-check zset terminal set.
-check (z _) terminal zset.
-check add (exists zset (fun x => exists zset (fun y => _))) zset.
-
-step (lift (lift add (z A)) (z B)) (z C) :-
-    plus A B C.

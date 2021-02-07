@@ -71,7 +71,7 @@ concrete.resolve_conversion (ccokappa Name Obj Body) (cokappa Obj (concrete.lamb
       / lift { <expr> "lift" <compound> }
       / copass { <expr> "copass" <compound> }
       / colift { <expr> "colift" <compound> }
-      / axiom { "axiom" <makam.string_literal> ":" <expr> "→" <expr> }
+      / axiom { "axiom" <makam.string_literal> ":" <expr> "->" <expr> }
       / expr ;
 
   expr ->
@@ -80,7 +80,7 @@ concrete.resolve_conversion (ccokappa Name Obj Body) (cokappa Obj (concrete.lamb
       / bang { "!" <expr> }
       / absurd { "absurd" <expr> }
       / terminal { "*" }
-      / initial { "∅" }
+      / initial { "mt" }
       / add { "add" }
       / zset { "Z" }
       / z { <makam.int_literal> }
@@ -92,17 +92,17 @@ concrete.resolve_conversion (ccokappa Name Obj Body) (cokappa Obj (concrete.lamb
       / compound ;
 
   binder ->
-      cforall { "∀" <variable> ":" "*" "→" <expr> "," <binder> }
-      / czeta { "λ" <variable> ":" "*" "→" <expr> "⇒" <binder> }
+      cforall { "forall" <variable> ":" "*" "->" <expr> "," <binder> }
+      / czeta { "lam" <variable> ":" "*" "->" <expr> "=>" <binder> }
 
-      / cexists { "∃" <variable> ":" "*" "→" <expr> "," <binder> }
-      / ckappa { "κ" <variable> ":" "*" "→" <expr> "⇒" <binder> }
+      / cexists { "exists" <variable> ":" "*" "->" <expr> "," <binder> }
+      / ckappa { "kappa" <variable> ":" "*" "->" <expr> "=>" <binder> }
 
-      / ccoforall { "∀" <variable> ":" <expr> "→" "∅" "," <binder> }
-      / ccozeta { "λ" <variable> ":" <expr> "→" "∅" "⇒" <binder> }
+      / ccoforall { "forall" <variable> ":" <expr> "->" "mt" "," <binder> }
+      / ccozeta { "lam" <variable> ":" <expr> "->" "mt" "=>" <binder> }
 
-      / ccoexists { "∃" <variable> ":" <expr> "→" "∅" "," <binder> }
-      / ccokappa { "κ" <variable> ":" <expr> "→" "∅" "⇒" <binder> }
+      / ccoexists { "exists" <variable> ":" <expr> "->" "mt" "," <binder> }
+      / ccokappa { "kappa" <variable> ":" <expr> "->" "mt" "=>" <binder> }
 
       / chain
 

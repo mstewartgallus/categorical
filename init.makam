@@ -1,9 +1,24 @@
-%use "ast".
+(*
+   Copyright 2021 Molly Stewart-Gallus
 
-%use "program".
-%use "syntax".
-%use "check".
-%use "integers".
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*)
+%use "src/ast".
+%use "src/program".
+%use "src/syntax".
+%use "src/infer".
+%use "src/check".
+%use "src/integers".
 
 exec : [A] instr A -> A -> prop.
 
@@ -21,6 +36,28 @@ eval_ Program A B Result :-
     run Program X,
     check X A B,
     multistep X Result.
+
+typecheck_ : program term -> term -> term -> prop.
+typecheck_ Program A B :-
+    run Program X,
+    check X A B.
+
+typecheck : string -> string -> string -> prop.
+typecheck Input AStr BStr :-
+    isocast Input (Program : program term),
+
+    (* for quick prototyping instead of implementing universes. *)
+
+    (check object _ object ->
+         typecheck_ Program A B),
+
+    if refl.isunif A
+            then unify AStr "_"
+            else isocast (pure A) (AStr : string),
+
+    if refl.isunif B
+            then unify BStr "_"
+            else isocast (pure B) (BStr : string).
 
 eval : string -> string -> string -> string -> prop.
 eval Input AStr BStr ResultStr :-
@@ -45,4 +82,4 @@ eval Input AStr BStr ResultStr :-
             then unify ResultStr "_"
             else isocast (pure Result) (ResultStr : string).
 
-eval << λ "a" : * → Set ⇒ λ "x" : * → "a" ⇒ "x" >> Dom Cod Result ?
+(* eval << lam "a" : * -> Set => lam "x" : * -> "a" => "x" >> Dom Cod Result ? *)

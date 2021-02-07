@@ -1,0 +1,58 @@
+infer : term -> term -> term -> prop.
+domain : term -> term -> prop.
+codomain : term -> term -> prop.
+
+infer X A B :-
+    domain X A,
+    codomain X B.
+
+domain (axiom _ A _) A.
+codomain (axiom _ _ B) B.
+
+domain set _.
+codomain set object.
+
+(* Basic Rules of Categories *)
+domain (id A) A.
+codomain (id A) A.
+
+domain (compose _ G) A :- domain G A.
+codomain (compose F _) A :- codomain F A.
+
+domain terminal _.
+codomain terminal set.
+
+domain (bang A) A.
+codomain (bang _) terminal.
+
+domain initial _.
+codomain initial set.
+
+domain (absurd A) initial.
+codomain (absurd A) A.
+
+(* Functions/Dependent Products *)
+domain (forall _ _) terminal.
+codomain (forall A B) L :-
+    (x:term -> domain x terminal -> codomain x A -> codomain (B x) L).
+
+domain (zeta A Body) B :-
+    (x:term -> domain x terminal -> codomain x A -> domain (Body x) B).
+codomain (zeta A Body) (forall A C) :-
+    (x:term -> domain x terminal -> codomain x A -> codomain (Body x) (C x)).
+
+domain (pass F _) C :- domain F C.
+codomain (pass F _) (B X) :- codomain F (forall _ B).
+
+(* Tuples/Dependent Sum *)
+domain (exists _ _) terminal.
+codomain (exists A B) L :-
+    (x:term -> domain x terminal -> codomain x A -> codomain (B x) L).
+
+domain (kappa A Body) (exists A C) :-
+    (x:term -> domain x terminal -> codomain x A -> domain (Body x) (C x)).
+codomain (kappa A Body) B :-
+    (x:term -> domain x terminal -> codomain x A -> codomain (Body x) B).
+
+domain (lift F _) (B X) :- domain F (exists _ B).
+codomain (lift F _) C :- codomain F C.
