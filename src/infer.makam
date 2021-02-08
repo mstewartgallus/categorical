@@ -56,3 +56,27 @@ codomain (kappa A Body) B :-
 
 domain (lift F _) (B X) :- domain F (exists _ B).
 codomain (lift F _) C :- codomain F C.
+
+domain (coforall _ _) terminal.
+codomain (coforall A B) L :-
+    (x:term -> codomain x initial -> domain x A -> codomain (B x) L).
+
+codomain (cozeta A Body) B :-
+    (x:term -> codomain x initial -> domain x A -> codomain (Body x) B).
+domain (cozeta A Body) (coforall A C) :-
+    (x:term -> codomain x initial -> domain x A -> domain (Body x) (C x)).
+
+codomain (copass F _) C :- codomain F C.
+domain (copass F _) (B X) :- domain F (coforall _ B).
+
+domain (coexists _ _) terminal.
+codomain (coexists A B) L :-
+    (x:term -> codomain x initial -> domain x A -> codomain (B x) L).
+
+codomain (cokappa A Body) (coexists A C) :-
+    (x:term -> codomain x initial -> domain x A -> codomain (Body x) (C x)).
+domain (kappa A Body) B :-
+    (x:term -> codomain x initial -> domain x A -> domain (Body x) B).
+
+codomain (colift F _) (B X) :- codomain F (exists _ B).
+domain (colift F _) C :- domain F C.

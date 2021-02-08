@@ -35,12 +35,10 @@ wellformed (forall A B) :-
     (x:term -> wellformed x -> domain x terminal -> codomain x A ->
          and (domain (B x) terminal)
          (wellformed (B x))).
-
 wellformed (zeta A B) :-
     wellformed A,
     (x:term -> wellformed x -> domain x terminal -> codomain x A ->
          wellformed (B x)).
-
 wellformed (pass F X) :-
     domain X terminal,
     codomain X A,
@@ -53,16 +51,46 @@ wellformed (exists A B) :-
     (x:term -> wellformed x -> domain x terminal -> codomain x A ->
          and (domain (B x) terminal)
          (wellformed (B x))).
-
 wellformed (kappa A B) :-
     wellformed A,
     (x:term -> wellformed x -> domain x terminal -> codomain x A ->
          wellformed (B x)).
-
 wellformed (lift F X) :-
     domain X terminal,
     codomain X A,
     domain F (exists A _),
+    wellformed F,
+    wellformed X.
+
+wellformed (coforall A B) :-
+    wellformed A,
+    (x:term -> wellformed x -> codomain x initial -> domain x A ->
+         and (domain (B x) terminal)
+         (wellformed (B x))).
+wellformed (cozeta A B) :-
+    wellformed A,
+    (x:term -> wellformed x -> codomain x initial -> domain x A ->
+         wellformed (B x)).
+wellformed (copass F X) :-
+    codomain X initial,
+    domain X A,
+    domain F (coforall A _),
+    wellformed F,
+    wellformed X.
+
+wellformed (coexists A B) :-
+    wellformed A,
+    (x:term -> wellformed x -> codomain x initial -> domain x A ->
+         and (domain (B x) terminal)
+         (wellformed (B x))).
+wellformed (cokappa A B) :-
+    wellformed A,
+    (x:term -> wellformed x -> codomain x initial -> domain x A ->
+         wellformed (B x)).
+wellformed (colift F X) :-
+    codomain X initial,
+    domain X A,
+    codomain F (coexists A _),
     wellformed F,
     wellformed X.
 
