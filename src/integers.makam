@@ -12,5 +12,5 @@ wellformed zset.
 wellformed (z _).
 wellformed add.
 
-step (lift (lift add (z A)) (z B)) (z C) :-
+step_ (lift (lift add (z A)) (z B)) (z C) :-
     plus A B C.

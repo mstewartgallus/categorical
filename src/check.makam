@@ -118,13 +118,13 @@ step X Y :-
 step_ (compose F G) Y :-
     apply F G Y.
 
-step (lift (kappa A F) X) (F X) :-
+step_ (lift (kappa A F) X) (F X) :-
     check X terminal A.
-step (pass (zeta A F) X) (F X) :-
+step_ (pass (zeta A F) X) (F X) :-
     check X terminal A.
-step (colift (cokappa A F) X) (F X) :-
+step_ (colift (cokappa A F) X) (F X) :-
     check X A initial.
-step (copass (cozeta A F) X) (F X) :-
+step_ (copass (cozeta A F) X) (F X) :-
     check X A initial.
 
 apply (id A) X X :-
